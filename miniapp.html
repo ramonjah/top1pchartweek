@@ -52,14 +52,23 @@
     display: flex; gap: 6px; margin-top: 16px; position: relative; z-index: 1;
     background: var(--tg-theme-secondary-bg-color, #141416);
     padding: 4px; border-radius: 12px;
+    overflow-x: auto;
+  }
+  .tab-indicator {
+    position: absolute; top: 4px; bottom: 4px; left: 4px;
+    background: #1DB954; border-radius: 9px;
+    transition: transform 0.32s cubic-bezier(.22,1,.36,1), width 0.32s cubic-bezier(.22,1,.36,1);
+    z-index: 0;
   }
   .tab {
     flex: 1; text-align: center; padding: 10px 4px; border: none;
     background: transparent; color: var(--tg-theme-hint-color, #8A8A8F);
-    font-size: 12px; font-weight: 700; border-radius: 9px; cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease;
+    font-size: 11px; font-weight: 700; border-radius: 9px; cursor: pointer;
+    transition: color 0.25s ease;
+    white-space: nowrap;
+    position: relative; z-index: 1;
   }
-  .tab.active { background: #1DB954; color: #06210F; }
+  .tab.active { color: #06210F; }
 
   .rule {
     margin-top: 14px; height: 2px; width: 0;
@@ -78,12 +87,17 @@
     opacity: 0; transform: translateY(16px) scale(0.97);
     animation: cardIn 0.55s cubic-bezier(.22,1.2,.36,1) forwards;
     border: 1.5px solid transparent;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.15s ease;
   }
+  .card:active { transform: scale(0.985); }
   @keyframes cardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
   .card.playing {
     border-color: #1DB954;
-    box-shadow: 0 0 0 1px #1DB95440, 0 4px 16px #1DB95422;
+    animation: cardIn 0.55s cubic-bezier(.22,1.2,.36,1) forwards, pulseGlow 2.2s ease-in-out infinite;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 1px #1DB95440, 0 4px 16px #1DB95422; }
+    50% { box-shadow: 0 0 0 1px #1DB95470, 0 4px 26px #1DB95448; }
   }
 
   .num {
@@ -91,11 +105,20 @@
     background: #000; color:#fff;
     font-size: 11px; font-weight:800; padding: 3px 8px; border-radius: 8px;
     margin-bottom: 8px;
+    transition: background 0.3s ease, transform 0.3s ease;
   }
-  .card.playing .num { background: #1DB954; color: #06210F; }
+  .card.playing .num { background: #1DB954; color: #06210F; animation: numPulse 2.2s ease-in-out infinite; }
+  @keyframes numPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
   .player-wrap { margin-bottom: 8px; }
-  .embed-slot { border-radius: 12px; min-height: 152px; overflow: hidden; }
+  .embed-slot {
+    border-radius: 12px; min-height: 152px; overflow: hidden;
+    background: linear-gradient(100deg, #1c1c1f 30%, #26262a 50%, #1c1c1f 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  .embed-slot:has(iframe) { animation: none; background: none; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .fallback {
     width: 100%; margin-top: 6px;
     border: none; cursor: pointer; border-radius: 9px;
@@ -131,14 +154,130 @@
   <p>Rouman · 10 треков · Drum &amp; Bass</p>
 </div>
 
-<div class="tabs">
-  <button class="tab active" id="tabA" onclick="showWeek('a')">13 ИЮЛЯ</button>
+<div class="tabs" id="tabsWrap">
+  <div class="tab-indicator" id="tabIndicator"></div>
+  <button class="tab active" id="tabD" onclick="showWeek('d')">20 ИЮЛЯ</button>
+  <button class="tab" id="tabA" onclick="showWeek('a')">13 ИЮЛЯ</button>
   <button class="tab" id="tabB" onclick="showWeek('b')">6 ИЮЛЯ</button>
   <button class="tab" id="tabC" onclick="showWeek('c')">29 ИЮНЯ</button>
 </div>
 <div class="rule"></div>
 
-<div class="week active" id="weekA">
+<div class="week active" id="weekD">
+
+<div class="card" id="card-d0" style="animation-delay:80ms">
+  <div class="num">01</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d0" data-uri="spotify:track:3cUeEZIzDAxYew0mUtgEjL" data-order="d" data-idx="0"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/3cUeEZIzDAxYew0mUtgEjL')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Screamarts+Future+Funk')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Screamarts+Future+Funk')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d1" style="animation-delay:150ms">
+  <div class="num">02</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d1" data-uri="spotify:track:1WG1gm5NKicTOZnu2Vf0Ze" data-order="d" data-idx="1"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/1WG1gm5NKicTOZnu2Vf0Ze')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=AIRGLO+Teddy+Killerz+In+My+Heart')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=AIRGLO+Teddy+Killerz+In+My+Heart')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d2" style="animation-delay:220ms">
+  <div class="num">03</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d2" data-uri="spotify:track:5pOQpKgG3wteP89ZIKnTRC" data-order="d" data-idx="2"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/5pOQpKgG3wteP89ZIKnTRC')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Fusion+Season+Burntboi+Target')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Fusion+Season+Burntboi+Target')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d3" style="animation-delay:290ms">
+  <div class="num">04</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d3" data-uri="spotify:track:3yQHHHTJ2cyDFzFi1lI07g" data-order="d" data-idx="3"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/3yQHHHTJ2cyDFzFi1lI07g')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Zapya+Lone+Now')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Zapya+Lone+Now')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d4" style="animation-delay:360ms">
+  <div class="num">05</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d4" data-uri="spotify:track:5GmmEhCXdF7DNbPUSEXSw9" data-order="d" data-idx="4"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/5GmmEhCXdF7DNbPUSEXSw9')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Forbidden+Society+Sheruan+Picture+Of+Us+Remix')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Forbidden+Society+Sheruan+Picture+Of+Us+Remix')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d5" style="animation-delay:430ms">
+  <div class="num">06</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d5" data-uri="spotify:track:0uvZcm225VFhSVGQHilPKh" data-order="d" data-idx="5"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/0uvZcm225VFhSVGQHilPKh')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Kings+Of+The+Rollers+Pushed')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Kings+Of+The+Rollers+Pushed')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d6" style="animation-delay:500ms">
+  <div class="num">07</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d6" data-uri="spotify:track:68VQh5nVUYcMDYLX6ZngF0" data-order="d" data-idx="6"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/68VQh5nVUYcMDYLX6ZngF0')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Envy+Boss+Fight')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Envy+Boss+Fight')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d7" style="animation-delay:570ms">
+  <div class="num">08</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d7" data-uri="spotify:track:0ReqBwL4x2Ta6OTzTs1Ywx" data-order="d" data-idx="7"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/0ReqBwL4x2Ta6OTzTs1Ywx')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Flash+Hear+Dis')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Flash+Hear+Dis')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d8" style="animation-delay:640ms">
+  <div class="num">09</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d8" data-uri="spotify:track:2BlzOFxWweV9j5tEFfEeHu" data-order="d" data-idx="8"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/2BlzOFxWweV9j5tEFfEeHu')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=GGrossy+Keep+Happy')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=GGrossy+Keep+Happy')">VK Музыка</button>
+  </div>
+</div>
+<div class="card" id="card-d9" style="animation-delay:710ms">
+  <div class="num">10</div>
+  <div class="player-wrap">
+    <div class="embed-slot" id="embed-d9" data-uri="spotify:track:4adcXcxlhS6km6vTdYZq0a" data-order="d" data-idx="9"></div>
+    <button class="fallback" onclick="tap('https://open.spotify.com/track/4adcXcxlhS6km6vTdYZq0a')">▶ Открыть плеер Spotify</button>
+  </div>
+  <div class="links">
+    <button class="pill ym" onclick="tap('https://music.yandex.ru/search?text=Spaow+Amazon+Update')">Яндекс Музыка</button>
+    <button class="pill vk" onclick="tap('https://vk.com/audio?q=Spaow+Amazon+Update')">VK Музыка</button>
+  </div>
+</div>
+</div>
+
+<div class="week" id="weekA">
 
 <div class="card" id="card-a0" style="animation-delay:80ms">
   <div class="num">01</div>
@@ -497,17 +636,14 @@
   }
   function showWeek(which) {
     if (tg && tg.HapticFeedback) { tg.HapticFeedback.selectionChanged(); }
-    document.getElementById('weekA').classList.toggle('active', which === 'a');
-    document.getElementById('weekB').classList.toggle('active', which === 'b');
-    document.getElementById('weekC').classList.toggle('active', which === 'c');
-    document.getElementById('tabA').classList.toggle('active', which === 'a');
-    document.getElementById('tabB').classList.toggle('active', which === 'b');
-    document.getElementById('tabC').classList.toggle('active', which === 'c');
+    ['d','a','b','c'].forEach(w => {
+      document.getElementById('week' + w.toUpperCase()).classList.toggle('active', which === w);
+      document.getElementById('tab' + w.toUpperCase()).classList.toggle('active', which === w);
+    });
   }
 
   // --- Spotify IFrame API ---
-  // controllers сгруппированы по неделе (order), чтобы автопереход шёл в рамках своего чарта
-  const groups = {};   // { a: [controller0, controller1, ...], b: [...], c: [...] }
+  const groups = {};
   let activeController = null;
   let activePid = null;
 
@@ -528,7 +664,6 @@
           const playing = !e.data.isPaused;
 
           if (playing) {
-            // остановить предыдущий играющий плеер
             if (activeController && activeController !== controller) {
               activeController.pause();
               const prevCard = document.getElementById('card-' + activePid);
@@ -541,7 +676,6 @@
             card.classList.remove('playing');
           }
 
-          // автопереход на следующий трек чарта, когда текущий доигран
           if (playing && e.data.duration > 0 && e.data.position >= e.data.duration - 800) {
             const list = groups[order];
             const next = list[idx + 1];
