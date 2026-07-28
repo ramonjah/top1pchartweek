@@ -134,7 +134,10 @@
     opacity:0; transform:translateY(22px) scale(.97);
     transition:border-color .3s ease, transform .18s ease;
   }
-  .card.reveal { animation:cardIn .6s cubic-bezier(.22,1.15,.36,1) both; }
+  .card.reveal {
+    opacity:1; transform:translateY(0) scale(1);
+    animation:cardIn .6s cubic-bezier(.22,1.15,.36,1) both;
+  }
   @keyframes cardIn { to{opacity:1; transform:translateY(0) scale(1);} }
   .card:active { transform:scale(.985); }
 
